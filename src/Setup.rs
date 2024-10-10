@@ -110,9 +110,9 @@ pub fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
                                         text: Text::from_section(
                                             label.to_string(),
                                             TextStyle {
-                                                font: asset_server.load("fonts/FiraSans-Bold.ttf"),
+                                                font: asset_server.load("fonts/Rows_of_Sunflowers.ttf"),
                                                 font_size: 32.0,
-                                                color: Color::WHITE,
+                                                color: Color::BLACK,
                                             },
                                         ),
                                         ..default()
