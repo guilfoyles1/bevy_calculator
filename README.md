@@ -28,7 +28,7 @@ To get started, follow these steps:
 1. **Clone the repository**:
 
     ```sh
-    git@github.com:guilfoyles1/BevyCalc.git
+    https://github.com/guilfoyles1/BevyCalc.git
     ```
 
 2. **Enter the directory**:
