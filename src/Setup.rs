@@ -1,13 +1,12 @@
 use bevy::prelude::*;
-use crate::component::{ButtonLabel, Bubble, SequenceDisplay};
-use crate::constants::NORMAL_BUTTON;
-use crate::constants::BACKGROUND_COLOR;
-use crate::constants::BORDER_COLOR;
+use crate::component::{ActionText, InteractiveBubble, InputDisplay};
+use crate::theme::{DEFAULT_BUTTON, MAIN_BACKGROUND, OUTLINE_COLOR}; // Changed constants module name to 'theme'
 
-
-pub fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
+pub fn initialize_ui(mut commands: Commands, asset_server: Res<AssetServer>) {
+    // Spawn a 2D camera
     commands.spawn(Camera2dBundle::default());
 
+    // Root node for the entire UI layout
     commands
         .spawn(NodeBundle {
             style: Style {
@@ -18,10 +17,11 @@ pub fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
                 align_items: AlignItems::Center,
                 ..default()
             },
-            background_color: BACKGROUND_COLOR.into(), // Set background to pink
+            background_color: MAIN_BACKGROUND.into(), // Set background to a soft beige color
             ..default()
         })
         .with_children(|parent| {
+            // Create the display area for user input (Bubble)
             parent.spawn((
                 NodeBundle {
                     style: Style {
@@ -35,12 +35,13 @@ pub fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
                         justify_content: JustifyContent::Center,
                         ..default()
                     },
-                    background_color: Color::rgb(0.3, 0.5, 0.9).into(), // Set bubble color to a lighter blue
+                    background_color: Color::rgb(0.3, 0.5, 0.9).into(), // Light blue for the display
                     ..default()
                 },
-                Bubble,
+                InteractiveBubble, // Marker component for interactive bubble
             ))
             .with_children(|parent| {
+                // Add the text display for the input sequence
                 parent.spawn(TextBundle {
                     text: Text {
                         sections: vec![TextSection {
@@ -55,10 +56,11 @@ pub fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
                     },
                     ..default()
                 })
-                .insert(SequenceDisplay);
+                .insert(InputDisplay); // Marker for sequence display component
             });
 
-            let buttons: Vec<Vec<&str>> = vec![
+            // Define the layout for the calculator buttons in rows
+            let button_grid: Vec<Vec<&str>> = vec![
                 vec!["7", "8", "9", "/"],
                 vec!["4", "5", "6", "*"],
                 vec!["1", "2", "3", "-"],
@@ -66,14 +68,15 @@ pub fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
                 vec![".", "="],
             ];
 
-            for row in buttons {
+            // Iterate through each row of buttons and spawn them
+            for row in button_grid {
                 parent
                     .spawn(NodeBundle {
                         style: Style {
                             flex_direction: FlexDirection::Row,
-                            justify_content: JustifyContent::SpaceBetween, // Add space between buttons in a row
+                            justify_content: JustifyContent::SpaceBetween, // Add space between buttons in rows
                             margin: UiRect {
-                                bottom: Val::Px(10.0), // Add some margin between rows
+                                bottom: Val::Px(10.0), // Spacing between rows
                                 ..default()
                             },
                             ..default()
@@ -81,6 +84,7 @@ pub fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
                         ..default()
                     })
                     .with_children(|parent| {
+                        // Create each button in the row
                         for label in row {
                             parent
                                 .spawn((
@@ -89,28 +93,29 @@ pub fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
                                             width: Val::Px(150.0),
                                             height: Val::Px(65.0),
                                             margin: UiRect {
-                                                left: Val::Px(5.0), // Add space between buttons in a row
-                                                right: Val::Px(5.0), // Add space between buttons in a row
+                                                left: Val::Px(5.0), // Horizontal spacing between buttons
+                                                right: Val::Px(5.0),
                                                 top: Val::Px(10.0),
                                                 bottom: Val::Px(10.0),
                                             },
                                             justify_content: JustifyContent::Center,
                                             align_items: AlignItems::Center,
-                                            border: UiRect::all(Val::Px(5.0)), // Border size set here
+                                            border: UiRect::all(Val::Px(5.0)), // Set border thickness
                                             ..default()
                                         },
-                                        background_color: NORMAL_BUTTON.into(),
-                                        border_color: BorderColor(BORDER_COLOR), // Set the border color here
+                                        background_color: DEFAULT_BUTTON.into(),
+                                        border_color: BorderColor(OUTLINE_COLOR), // Teal outline for buttons
                                         ..default()
                                     },
-                                    ButtonLabel(label.to_string()),
+                                    ActionText(label.to_string()), // Assign label text to button
                                 ))
                                 .with_children(|parent| {
+                                    // Set the button text with custom font and style
                                     parent.spawn(TextBundle {
                                         text: Text::from_section(
                                             label.to_string(),
                                             TextStyle {
-                                                font: asset_server.load("fonts/Rows_of_Sunflowers.ttf"),
+                                                font: asset_server.load("fonts/Rows_of_Sunflowers.ttf"), // Custom font
                                                 font_size: 32.0,
                                                 color: Color::BLACK,
                                             },
