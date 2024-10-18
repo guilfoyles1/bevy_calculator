@@ -1,13 +1,15 @@
-// src/resources.rs
+// src/tracker.rs
 use bevy::prelude::Resource;
 
 #[derive(Resource, Default)]
-pub struct ClickedButtons {
-    pub buttons: Vec<String>,
+pub struct InputTracker {
+    // Vector to hold the sequence of button labels clicked
+    pub entries: Vec<String>,
 }
 
-impl ClickedButtons {
-    pub fn to_number_string(&self) -> String {
-        self.buttons.join("") // Convert to a single string
+impl InputTracker {
+    // Method to concatenate the entries into a single string
+    pub fn as_concatenated_string(&self) -> String {
+        self.entries.join("") // Join all entries into one continuous string
     }
 }
