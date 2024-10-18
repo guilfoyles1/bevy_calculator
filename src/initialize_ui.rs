@@ -1,12 +1,12 @@
 use bevy::prelude::*;
 use crate::component::{ActionText, InteractiveBubble, InputDisplay};
-use crate::theme::{DEFAULT_BUTTON, MAIN_BACKGROUND, OUTLINE_COLOR}; // Changed constants module name to 'theme'
+use crate::theme::{DEFAULT_BUTTON, MAIN_BACKGROUND, OUTLINE_COLOR}; // Import UI theme colors
 
 pub fn initialize_ui(mut commands: Commands, asset_server: Res<AssetServer>) {
-    // Spawn a 2D camera
+    // Spawn a 2D camera for the UI
     commands.spawn(Camera2dBundle::default());
 
-    // Root node for the entire UI layout
+    // Create the root node for the UI layout
     commands
         .spawn(NodeBundle {
             style: Style {
@@ -17,49 +17,49 @@ pub fn initialize_ui(mut commands: Commands, asset_server: Res<AssetServer>) {
                 align_items: AlignItems::Center,
                 ..default()
             },
-            background_color: MAIN_BACKGROUND.into(), // Set background to a soft beige color
+            background_color: MAIN_BACKGROUND.into(), // Set the main background color
             ..default()
         })
         .with_children(|parent| {
-            // Create the display area for user input (Bubble)
+            // Spawn the interactive bubble for input display
             parent.spawn((
                 NodeBundle {
                     style: Style {
                         width: Val::Percent(60.0),
                         height: Val::Px(50.0),
                         margin: UiRect {
-                            top: Val::Px(20.0),
+                            top: Val::Px(20.0), // Margin from the top
                             ..default()
                         },
                         align_items: AlignItems::Center,
                         justify_content: JustifyContent::Center,
                         ..default()
                     },
-                    background_color: Color::rgb(0.3, 0.5, 0.9).into(), // Light blue for the display
+                    background_color: Color::rgb(0.3, 0.5, 0.9).into(), // Light blue for the bubble
                     ..default()
                 },
-                InteractiveBubble, // Marker component for interactive bubble
+                InteractiveBubble, // Marker component for interactive behavior
             ))
             .with_children(|parent| {
-                // Add the text display for the input sequence
+                // Add the text section for displaying the input sequence
                 parent.spawn(TextBundle {
                     text: Text {
                         sections: vec![TextSection {
-                            value: "".to_string(),
+                            value: "".to_string(), // Initialize with empty value
                             style: TextStyle {
-                                font: asset_server.load("fonts/FiraSans-Bold.ttf"),
+                                font: asset_server.load("fonts/FiraSans-Bold.ttf"), // Load font
                                 font_size: 32.0,
-                                color: Color::WHITE,
+                                color: Color::WHITE, // Text color
                             },
                         }],
                         ..default()
                     },
                     ..default()
                 })
-                .insert(InputDisplay); // Marker for sequence display component
+                .insert(InputDisplay); // Marker for displaying the input sequence
             });
 
-            // Define the layout for the calculator buttons in rows
+            // Define the button layout in rows
             let button_grid: Vec<Vec<&str>> = vec![
                 vec!["7", "8", "9", "/"],
                 vec!["4", "5", "6", "*"],
@@ -68,15 +68,15 @@ pub fn initialize_ui(mut commands: Commands, asset_server: Res<AssetServer>) {
                 vec![".", "="],
             ];
 
-            // Iterate through each row of buttons and spawn them
+            // Create button rows
             for row in button_grid {
                 parent
                     .spawn(NodeBundle {
                         style: Style {
                             flex_direction: FlexDirection::Row,
-                            justify_content: JustifyContent::SpaceBetween, // Add space between buttons in rows
+                            justify_content: JustifyContent::SpaceBetween, // Space between buttons
                             margin: UiRect {
-                                bottom: Val::Px(10.0), // Spacing between rows
+                                bottom: Val::Px(10.0), // Bottom margin between rows
                                 ..default()
                             },
                             ..default()
@@ -84,40 +84,40 @@ pub fn initialize_ui(mut commands: Commands, asset_server: Res<AssetServer>) {
                         ..default()
                     })
                     .with_children(|parent| {
-                        // Create each button in the row
+                        // Create buttons in the current row
                         for label in row {
                             parent
                                 .spawn((
                                     ButtonBundle {
                                         style: Style {
-                                            width: Val::Px(150.0),
-                                            height: Val::Px(65.0),
+                                            width: Val::Px(150.0), // Set button width
+                                            height: Val::Px(65.0), // Set button height
                                             margin: UiRect {
-                                                left: Val::Px(5.0), // Horizontal spacing between buttons
-                                                right: Val::Px(5.0),
-                                                top: Val::Px(10.0),
-                                                bottom: Val::Px(10.0),
+                                                left: Val::Px(5.0), // Left margin
+                                                right: Val::Px(5.0), // Right margin
+                                                top: Val::Px(10.0), // Top margin
+                                                bottom: Val::Px(10.0), // Bottom margin
                                             },
                                             justify_content: JustifyContent::Center,
                                             align_items: AlignItems::Center,
-                                            border: UiRect::all(Val::Px(5.0)), // Set border thickness
+                                            border: UiRect::all(Val::Px(5.0)), // Set border size
                                             ..default()
                                         },
-                                        background_color: DEFAULT_BUTTON.into(),
-                                        border_color: BorderColor(OUTLINE_COLOR), // Teal outline for buttons
+                                        background_color: DEFAULT_BUTTON.into(), // Set button background color
+                                        border_color: BorderColor(OUTLINE_COLOR), // Set button outline color
                                         ..default()
                                     },
-                                    ActionText(label.to_string()), // Assign label text to button
+                                    ActionText(label.to_string()), // Create button label
                                 ))
                                 .with_children(|parent| {
-                                    // Set the button text with custom font and style
+                                    // Set the text for the button
                                     parent.spawn(TextBundle {
                                         text: Text::from_section(
                                             label.to_string(),
                                             TextStyle {
-                                                font: asset_server.load("fonts/Rows_of_Sunflowers.ttf"), // Custom font
+                                                font: asset_server.load("fonts/Rows_of_Sunflowers.ttf"), // Load custom font
                                                 font_size: 32.0,
-                                                color: Color::BLACK,
+                                                color: Color::BLACK, // Set button text color
                                             },
                                         ),
                                         ..default()
