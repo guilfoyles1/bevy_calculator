@@ -1,4 +1,3 @@
-// src/tracker.rs
 use bevy::prelude::Resource;
 
 #[derive(Resource, Default)]
