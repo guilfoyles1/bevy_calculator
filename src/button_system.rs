@@ -1,8 +1,8 @@
 use bevy::prelude::*;
-use crate::component::{ButtonLabel, SequenceDisplay};
-use crate::constants::{NORMAL_BUTTON, HOVERED_BUTTON, PRESSED_BUTTON, PURPLE, BORDER_COLOR};
-use crate::clicked_buttons::ClickedButtons;
-use crate::evaluate::{evaluate_sequence, toggle_last_number_sign};
+use crate::component::{ButtonName, InputDisplay};
+use crate::theme::{DEFAULT_BUTTON, HOVERED_BUTTON, PRESSED_BUTTON, BORDER_COLOR}; // Updated module name to 'theme'
+use crate::input_tracker::ButtonState; // Updated module name to 'input_tracker'
+use crate::calculation::{evaluate_sequence, toggle_last_number_sign}; // Updated module name to 'calculation'
 
 pub fn button_system(
     mut interaction_query: Query<
@@ -10,12 +10,12 @@ pub fn button_system(
             &Interaction,
             &mut BackgroundColor,
             &mut BorderColor,
-            &ButtonLabel,
+            &ButtonName,
         ),
         Changed<Interaction>,
     >,
-    mut text_query: Query<&mut Text, With<SequenceDisplay>>,
-    mut clicked_buttons: ResMut<ClickedButtons>,
+    mut text_query: Query<&mut Text, With<InputDisplay>>,
+    mut input_tracker: ResMut<ButtonState>,
 ) {
     for (interaction, mut color, mut border_color, button_label) in &mut interaction_query {
         match *interaction {
@@ -25,30 +25,30 @@ pub fn button_system(
 
                 match button_label.0.as_str() {
                     "=" => {
-                        let result = evaluate_sequence(&clicked_buttons.to_number_string());
+                        let result = evaluate_sequence(&input_tracker.concat_buttons());
                         for mut text in text_query.iter_mut() {
                             text.sections[0].value = format!("{}", result);
                         }
-                        clicked_buttons.buttons.clear();
-                        clicked_buttons.buttons.push(result.clone());
+                        input_tracker.buttons.clear();
+                        input_tracker.buttons.push(result.clone());
                     }
                     "C" => {
-                        clicked_buttons.buttons.clear();
+                        input_tracker.buttons.clear();
                         for mut text in text_query.iter_mut() {
                             text.sections[0].value = "".to_string();
                         }
                     }
-                    "+/-" => toggle_last_number_sign(&mut clicked_buttons),
-                    _ => clicked_buttons.buttons.push(button_label.0.clone()),
+                    "+/-" => toggle_last_number_sign(&mut input_tracker),
+                    _ => input_tracker.buttons.push(button_label.0.clone()),
                 }
 
                 for mut text in text_query.iter_mut() {
-                    text.sections[0].value = clicked_buttons.to_number_string();
+                    text.sections[0].value = input_tracker.concat_buttons();
                 }
 
                 println!(
                     "Button {} clicked! Current sequence: {}",
-                    button_label.0, clicked_buttons.to_number_string()
+                    button_label.0, input_tracker.concat_buttons()
                 );
             }
             Interaction::Hovered => {
@@ -56,7 +56,7 @@ pub fn button_system(
                 border_color.0 = Color::WHITE; // Change border color on hover
             }
             Interaction::None => {
-                *color = NORMAL_BUTTON.into(); // Default button color
+                *color = DEFAULT_BUTTON.into(); // Default button color
                 border_color.0 = BORDER_COLOR; // Default border color
             }
         }

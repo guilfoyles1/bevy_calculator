@@ -1,6 +1,6 @@
 use bevy::prelude::*;
-use crate::component::{ActionText, InteractiveBubble, InputDisplay};
-use crate::theme::{DEFAULT_BUTTON, MAIN_BACKGROUND, OUTLINE_COLOR}; // Import UI theme colors
+use crate::component::{ButtonName, InteractiveBubble, InputDisplay};
+use crate::theme::{DEFAULT_BUTTON, MAIN_BACKGROUND, BORDER_COLOR}; // Import UI theme colors
 
 pub fn initialize_ui(mut commands: Commands, asset_server: Res<AssetServer>) {
     // Spawn a 2D camera for the UI
@@ -35,7 +35,7 @@ pub fn initialize_ui(mut commands: Commands, asset_server: Res<AssetServer>) {
                         justify_content: JustifyContent::Center,
                         ..default()
                     },
-                    background_color: Color::rgb(0.3, 0.5, 0.9).into(), // Light blue for the bubble
+                    background_color: Color::srgb(0.3, 0.5, 0.9).into(), // Light blue for the bubble
                     ..default()
                 },
                 InteractiveBubble, // Marker component for interactive behavior
@@ -47,7 +47,7 @@ pub fn initialize_ui(mut commands: Commands, asset_server: Res<AssetServer>) {
                         sections: vec![TextSection {
                             value: "".to_string(), // Initialize with empty value
                             style: TextStyle {
-                                font: asset_server.load("fonts/FiraSans-Bold.ttf"), // Load font
+                                font: asset_server.load("/Users/shaynaguilfoyle/bevy_calculator-1/Font/Rows_of_Sunflowers.ttf"), // Load font
                                 font_size: 32.0,
                                 color: Color::WHITE, // Text color
                             },
@@ -104,10 +104,10 @@ pub fn initialize_ui(mut commands: Commands, asset_server: Res<AssetServer>) {
                                             ..default()
                                         },
                                         background_color: DEFAULT_BUTTON.into(), // Set button background color
-                                        border_color: BorderColor(OUTLINE_COLOR), // Set button outline color
+                                        border_color: BorderColor(BORDER_COLOR), // Set button outline color
                                         ..default()
                                     },
-                                    ActionText(label.to_string()), // Create button label
+                                    ButtonName(label.to_string()), // Create button label
                                 ))
                                 .with_children(|parent| {
                                     // Set the text for the button
@@ -115,7 +115,7 @@ pub fn initialize_ui(mut commands: Commands, asset_server: Res<AssetServer>) {
                                         text: Text::from_section(
                                             label.to_string(),
                                             TextStyle {
-                                                font: asset_server.load("fonts/Rows_of_Sunflowers.ttf"), // Load custom font
+                                                font: asset_server.load("/Users/shaynaguilfoyle/bevy_calculator-1/Font/Rows_of_Sunflowers.ttf"), // Load custom font
                                                 font_size: 32.0,
                                                 color: Color::BLACK, // Set button text color
                                             },

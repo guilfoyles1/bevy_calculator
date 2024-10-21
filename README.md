@@ -59,7 +59,7 @@ bevy-calculator/
 │   └── styles.rs        # Style and layout configuration for the UI.
 │
 ├── assets/
-│   └── fonts/           # Fonts used in the UI (FiraSans-Bold.ttf).
+│   └── Font/           # Font used in the UI (Rows_of_Sunflowers.ttf).
 │
 ├── Cargo.toml           # Contains dependencies, including Bevy.
 └── README.md            # You're reading it!
